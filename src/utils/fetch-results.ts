@@ -1,3 +1,4 @@
+import { requestUrl } from "obsidian";
 import { GeocodingResult } from "../results-modal";
 
 interface GeocodingAPIResponse {
@@ -14,11 +15,11 @@ interface GeocodingAPIResponse {
 
 export const fetchResults = async (searchTerm: string, apiKey: string) => {
 	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${apiKey}`;
-	const response = await fetch(url);
-	if (!response.ok) {
+	const response = await requestUrl(url);
+	if (response.status !== 200) {
 		throw new Error(`Server responded with ${response.status}`);
 	}
-	const { status, results } = (await response.json()) as GeocodingAPIResponse;
+	const { status, results } = response.json as GeocodingAPIResponse;
 	switch (status) {
 		case "OK":
 			break;
