@@ -93,15 +93,21 @@ export default class GeocodingPlugin extends Plugin {
 						break;
 					case "map_link":
 						switch (mapLinkProvider) {
-							case "apple":
-								frontmatter.map_link =
-									makeAppleMapsLink(result);
-								break;
 							case "google":
 								frontmatter.map_link =
 									makeGoogleMapsLink(result);
 								break;
+							case "apple":
+								frontmatter.map_link =
+									makeAppleMapsLink(result);
+								break;
 						}
+						break;
+					case "lat":
+						frontmatter.lat = result.lat;
+						break;
+					case "lng":
+						frontmatter.lng = result.lng;
 						break;
 				}
 			}

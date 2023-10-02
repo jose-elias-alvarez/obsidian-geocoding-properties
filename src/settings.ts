@@ -3,15 +3,17 @@ import GeocodingPlugin from "./main";
 import { GeocodingPluginSettings } from "./types";
 
 export const DEFAULT_SETTINGS: GeocodingPluginSettings = {
-	overrideExistingProperties: false,
-	mapLinkProvider: "apple",
-	apiProvider: "free-geocoding-api",
-	apiKey: "",
 	enabledProperties: {
 		address: true,
+		lat: true,
+		lng: true,
 		location: false,
 		map_link: false,
 	},
+	overrideExistingProperties: false,
+	mapLinkProvider: "google",
+	apiProvider: "free-geocoding-api",
+	apiKey: "",
 };
 
 export class GeocodingPluginSettingTab extends PluginSettingTab {
@@ -25,7 +27,21 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl("h1", { text: "Geocoding" });
+		containerEl.createEl("h2", { text: "Enabled properties" });
+		for (const property of Object.keys(
+			this.plugin.settings.enabledProperties
+		) as (keyof GeocodingPluginSettings["enabledProperties"])[]) {
+			new Setting(containerEl).setName(property).addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enabledProperties[property])
+					.onChange(async (value) => {
+						this.plugin.settings.enabledProperties[property] =
+							value;
+						await this.plugin.saveSettings();
+					})
+			);
+		}
+		containerEl.createEl("h2", { text: "Property settings" });
 		new Setting(containerEl)
 			.setName("Override existing properties")
 			.setDesc(
@@ -59,7 +75,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
-		containerEl.createEl("h2", { text: "API" });
+		containerEl.createEl("h2", { text: "API settings" });
 		new Setting(containerEl)
 			.setName("API provider")
 			.addDropdown((dropdown) =>
@@ -90,23 +106,5 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
-
-		containerEl.createEl("h2", { text: "Enabled Properties" });
-		containerEl.createEl("p", {
-			text: "Properties to insert into the frontmatter of the active note.",
-		});
-		for (const property of Object.keys(
-			this.plugin.settings.enabledProperties
-		) as (keyof GeocodingPluginSettings["enabledProperties"])[]) {
-			new Setting(containerEl).setName(property).addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.enabledProperties[property])
-					.onChange(async (value) => {
-						this.plugin.settings.enabledProperties[property] =
-							value;
-						await this.plugin.saveSettings();
-					})
-			);
-		}
 	}
 }
