@@ -56,6 +56,8 @@ This is the plugin's default API. It's free, but accuracy is not guaranteed, and
 
 You'll need to set up a Google Cloud project and enable the Geocoding API. You'll also need to [create an API key](https://developers.google.com/maps/documentation/geocoding/get-api-key). You'll also need to set up a billing account and [enable billing](https://developers.google.com/maps/documentation/geocoding/get-api-key#premium-auth) for your project.
 
+**Please be careful with your API key!** I do not have access to the key, but it's stored as plaintext in your Obsidian vault, and anyone with access to the key can make requests on your behalf, which will be charged to your billing account. If you're in doubt, please stick with the free API.
+
 #### API key
 
-If using the [Google Geocoding API](#google-geocoding-api), you'll need to set an API key here.
+If using the [Google Geocoding API](#google-geocoding-api), you'll need to set your API key here.
