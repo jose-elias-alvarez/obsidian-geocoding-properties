@@ -17,10 +17,13 @@ export class GeocodingSearchModal extends Modal {
 			text: "Confirm search term",
 		});
 		new Setting(contentEl).setName("Name").addText((text) => {
-			text.setValue(this.searchTerm);
-			text.onChange((value) => {
-				this.searchTerm = value;
-			});
+			const component = text
+				.setValue(this.searchTerm)
+				.onChange((value) => {
+					this.searchTerm = value;
+				});
+			// increase width for easier editing
+			component.inputEl.style.width = "100%";
 		});
 		new Setting(contentEl).addButton((btn) =>
 			btn

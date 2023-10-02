@@ -18,14 +18,25 @@ export default class GeocodingPlugin extends Plugin {
 		this.addCommand({
 			id: "geocoding-properties-insert",
 			name: "Insert properties into current note",
-			callback: async () => {
-				const currentFile = this.app.workspace.getActiveFile();
-				if (!currentFile) {
-					return;
-				}
-				new GeocodingSearchModal(this, currentFile.basename).open();
-			},
+			callback: this.displaySearchModal.bind(this),
 		});
+	}
+
+	async displaySearchModal() {
+		const currentFile = this.app.workspace.getActiveFile();
+		if (!currentFile) {
+			return;
+		}
+		let searchTerm = currentFile.basename;
+		const metadataCache = this.app.metadataCache.getFileCache(currentFile);
+		if (metadataCache?.frontmatter) {
+			searchTerm =
+				metadataCache.frontmatter.address ||
+				metadataCache.frontmatter.title ||
+				searchTerm;
+		}
+
+		new GeocodingSearchModal(this, searchTerm).open();
 	}
 
 	async getAndDisplayResults(searchTerm: string) {
