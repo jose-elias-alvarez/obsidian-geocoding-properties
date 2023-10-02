@@ -1,13 +1,18 @@
 import { requestUrl } from "obsidian";
-import { GeocodingAPIResponse } from "../types";
+import { GeocodingResult, GoogleGeocodingAPIResponse } from "../types";
 
-export const fetchResults = async (searchTerm: string, apiKey: string) => {
+// https://developers.google.com/maps/documentation/geocoding/overview
+export const fetchGoogleGeocodingResults = async (
+	searchTerm: string,
+	apiKey: string
+): Promise<GeocodingResult[]> => {
 	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${apiKey}`;
 	const response = await requestUrl(url);
 	if (response.status !== 200) {
 		throw new Error(`Server responded with ${response.status}`);
 	}
-	const { status, results } = response.json as GeocodingAPIResponse;
+
+	const { status, results } = response.json as GoogleGeocodingAPIResponse;
 	switch (status) {
 		case "OK":
 			break;
@@ -22,5 +27,13 @@ export const fetchResults = async (searchTerm: string, apiKey: string) => {
 		default:
 			throw new Error("Unknown API response");
 	}
-	return results;
+
+	return results.map((result) => ({
+		address: result.formatted_address,
+		lat: result.geometry.location.lat,
+		lng: result.geometry.location.lng,
+		info: result.types.join(", "),
+		id: result.place_id,
+		provider: "google-geocoding",
+	}));
 };

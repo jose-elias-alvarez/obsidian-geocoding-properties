@@ -15,7 +15,7 @@ export class GeocodingResultsModal extends SuggestModal<GeocodingResult> {
 
 	getSuggestions(query: string) {
 		return this.results.filter((result) =>
-			result.formatted_address.toLowerCase().includes(query.toLowerCase())
+			result.address.toLowerCase().includes(query.toLowerCase())
 		);
 	}
 
@@ -24,15 +24,15 @@ export class GeocodingResultsModal extends SuggestModal<GeocodingResult> {
 	}
 
 	renderSuggestion(
-		{ formatted_address, types, geometry: { location } }: GeocodingResult,
+		{ address, lat, lng, info }: GeocodingResult,
 		el: HTMLElement
 	) {
 		el.createEl("div", {
-			text: `${formatted_address} (${location.lat}, ${location.lng})`,
+			text: `${address} (${lat}, ${lng})`,
 		});
-		if (types.length > 0) {
+		if (info) {
 			el.createEl("small", {
-				text: types.join(", "),
+				text: info,
 			});
 		}
 	}

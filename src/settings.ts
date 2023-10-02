@@ -1,18 +1,13 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import GeocodingPlugin from "./main";
-
-export interface GeocodingPluginSettings {
-	apiKey: string;
-	insertAddress: boolean;
-	insertLocation: boolean;
-	mapLinkProvider?: "google" | "apple";
-}
+import { GeocodingPluginSettings } from "./types";
 
 export const DEFAULT_SETTINGS: GeocodingPluginSettings = {
+	apiProvider: "free-geocoding-api",
 	apiKey: "",
 	insertAddress: true,
 	insertLocation: false,
-	mapLinkProvider: undefined,
+	mapLinkProvider: "none",
 };
 
 export class GeocodingPluginSettingTab extends PluginSettingTab {
@@ -26,16 +21,36 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl("h2", { text: "API Key" });
-		new Setting(containerEl).setName("Maps API Key").addText((text) =>
-			text
-				.setPlaceholder("Enter your API key")
-				.setValue(this.plugin.settings.apiKey)
+		containerEl.createEl("h2", { text: "API Settings" });
+		new Setting(containerEl).setName("Provider").addDropdown((dropdown) =>
+			dropdown
+				.addOptions({
+					["free-geocoding-api"]: "Free Geocoding API",
+					["google-geocoding"]: "Google Geocoding",
+				})
+				.setValue(this.plugin.settings.apiProvider)
 				.onChange(async (value) => {
-					this.plugin.settings.apiKey = value;
+					switch (value) {
+						case "free-geocoding-api":
+						case "google-geocoding":
+							this.plugin.settings.apiProvider = value;
+							break;
+					}
 					await this.plugin.saveSettings();
 				})
 		);
+		new Setting(containerEl)
+			.setName("API Key")
+			.setDesc("Only required if using Google Geocoding")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.apiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.apiKey = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
 		containerEl.createEl("h2", { text: "Properties" });
 		new Setting(containerEl).setName("Address").addToggle((toggle) =>
 			toggle
@@ -58,7 +73,6 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
-
 		new Setting(containerEl)
 			.setName("Map link")
 			.setDesc("A map link from the chosen provider")
@@ -69,17 +83,13 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 						google: "Google Maps",
 						apple: "Apple Maps",
 					})
+					.setValue(this.plugin.settings.mapLinkProvider)
 					.onChange(async (value) => {
 						switch (value) {
 							case "none":
-								this.plugin.settings.mapLinkProvider =
-									undefined;
-								break;
 							case "google":
-								this.plugin.settings.mapLinkProvider = "google";
-								break;
 							case "apple":
-								this.plugin.settings.mapLinkProvider = "apple";
+								this.plugin.settings.mapLinkProvider = value;
 								break;
 						}
 						await this.plugin.saveSettings();
