@@ -1,4 +1,4 @@
-import { Notice, Plugin } from "obsidian";
+import { Notice, Plugin, TFile } from "obsidian";
 import { GeocodingResultsModal } from "./results-modal";
 import { GeocodingSearchModal } from "./search-modal";
 import { DEFAULT_SETTINGS, GeocodingPluginSettingTab } from "./settings";
@@ -19,25 +19,27 @@ export default class GeocodingPlugin extends Plugin {
 		this.addCommand({
 			id: "geocoding-properties-insert",
 			name: "Insert properties into current note",
-			callback: this.displaySearchModal.bind(this),
+			editorCallback: async (_, ctx) => {
+				const currentFile = ctx.file;
+				if (!currentFile) {
+					return;
+				}
+				const searchTerm = this.getSearchTerm(currentFile);
+				new GeocodingSearchModal(this, searchTerm).open();
+			},
 		});
 	}
 
-	async displaySearchModal() {
-		const currentFile = this.app.workspace.getActiveFile();
-		if (!currentFile) {
-			return;
-		}
-		let searchTerm = currentFile.basename;
-		const metadataCache = this.app.metadataCache.getFileCache(currentFile);
+	getSearchTerm(file: TFile) {
+		let searchTerm = file.basename;
+		const metadataCache = this.app.metadataCache.getFileCache(file);
 		if (metadataCache?.frontmatter) {
 			searchTerm =
 				metadataCache.frontmatter.address ||
 				metadataCache.frontmatter.title ||
 				searchTerm;
 		}
-
-		new GeocodingSearchModal(this, searchTerm).open();
+		return searchTerm;
 	}
 
 	async getAndDisplayResults(searchTerm: string) {

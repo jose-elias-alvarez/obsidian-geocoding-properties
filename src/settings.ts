@@ -42,7 +42,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 					})
 			);
 		}
-		containerEl.createEl("h2", { text: "Property settings" });
+		containerEl.createEl("h2", { text: "Behavior" });
 		new Setting(containerEl)
 			.setName("Override existing properties")
 			.setDesc(
@@ -79,7 +79,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h2", { text: "API settings" });
+		containerEl.createEl("h2", { text: "API" });
 		let apiKeyComponent: TextComponent;
 		new Setting(containerEl)
 			.setName("API provider")
