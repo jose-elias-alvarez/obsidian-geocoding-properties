@@ -42,8 +42,10 @@ export class GeocodingResultsModal extends SuggestModal<GeocodingResult> {
 		el.createEl("div", {
 			text: `${formatted_address} (${location.lat}, ${location.lng})`,
 		});
-		el.createEl("small", {
-			text: types.join(", "),
-		});
+		if (types.length > 0) {
+			el.createEl("small", {
+				text: types.join(", "),
+			});
+		}
 	}
 }
