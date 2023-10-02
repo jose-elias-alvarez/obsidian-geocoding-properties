@@ -1,11 +1,10 @@
 {
-	"id": "geocoding",
-	"name": "Geocoding",
+	"id": "geocoding-properties",
+	"name": "Geocoding Properties",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Insert address / location data from the Google Geocoding API into Obsidian notes.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Insert address / location data from geocoding APIs as Obsidian properties.",
+	"author": "Jose Elias Alvarez",
+	"authorUrl": "https://github.com/jose-elias-alvarez",
 	"isDesktopOnly": false
 }

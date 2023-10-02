@@ -1,96 +1,60 @@
-# Obsidian Sample Plugin
+# Obsidian Geocoding Properties
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Insert address / location data from geocoding APIs as Obsidian properties.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+## Usage
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+The plugin operates on the active note. It queries the selected geocoding API using one of the following search terms, in order of priority:
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+-   The current note's `address` property, if set
+-   The current note's `title` property, if set
+-   The current note's name
 
-## First time developing plugins?
+You'll be prompted to edit the search term before submitting it. If a search term is too broad, the API may return too many results or zero results, so it often helps to add additional information (city, state, country) to the term before submitting it.
 
-Quick starting guide for new plugin devs:
+After selecting a result, the active note's frontmatter will be updated with the properties specified in [Enabled properties](#enabled-properties).
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## Settings
 
-## Releasing new releases
+### Enabled properties
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+Controls which properties will be inserted into the active note's frontmatter:
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+-   `address`: The formatted address returned by the API (format is not guaranteed and varies by API)
+-   `lat`: The latitude of the location
+-   `lng`: The longitude of the location
+-   `location`: The coordinates of the location in an [obsidian-leaflet](https://github.com/javalent/obsidian-leaflet)-compatible format
+-   `map_link`: A link to an online map to the location using the configured [map provider](#map-provider)
 
-## Adding your plugin to the community plugin list
+### Property settings
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+#### Override existing properties
 
-## How to use
+Controls whether existing properties will be overwritten when inserting.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+#### Map provider
 
-## Manually installing the plugin
+Controls which map provider will be used when inserting the `map_link` property:
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+-   [Google Maps](https://www.google.com/maps)
+-   [Apple Maps](https://maps.apple.com)
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+### API settings
 
-## Funding URL
+#### API provider
 
-You can include funding URLs where people who use your plugin can financially support it.
+The plugin currently supports two geocoding APIs:
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+##### [Free Geocoding API](https://geocode.maps.co)
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+This is the plugin's default API. It's free, but accuracy is not guaranteed, and you may be subjected to rate limiting. (It also tends to show duplicates.)
 
-If you have multiple URLs, you can also do:
+##### [Google Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview)
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+**This is a paid API** (the cost per request is low, but it's not free). Setup is non-trivial, but accuracy is higher and rate limits are more generous.
 
-## API Documentation
+You'll need to set up a Google Cloud project and enable the Geocoding API. You'll also need to [create an API key](https://developers.google.com/maps/documentation/geocoding/get-api-key). You'll also need to set up a billing account and [enable billing](https://developers.google.com/maps/documentation/geocoding/get-api-key#premium-auth) for your project.
 
-See https://github.com/obsidianmd/obsidian-api
+#### API key
+
+If using the [Google Geocoding API](#google-geocoding-api), you'll need to set an API key here.

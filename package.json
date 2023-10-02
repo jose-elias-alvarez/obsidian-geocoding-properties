@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-geocoding",
+	"name": "obsidian-geocoding-properties",
 	"version": "1.0.0",
-	"description": "Insert address / location data from the Google Geocoding API into Obsidian notes",
+	"description": "Insert address / location data from geocoding APIs as Obsidian properties",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
