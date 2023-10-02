@@ -68,22 +68,42 @@ export default class GeocodingPlugin extends Plugin {
 		if (!currentFile) {
 			return;
 		}
-		const { insertAddress, insertLocation, mapLinkProvider } =
-			this.settings;
+		const {
+			overrideExistingProperties,
+			mapLinkProvider,
+			enabledProperties,
+		} = this.settings;
 		this.app.fileManager.processFrontMatter(currentFile, (frontmatter) => {
-			if (insertAddress) {
-				frontmatter.address = result.address;
-			}
-			if (insertLocation) {
-				frontmatter.location = [result.lat, result.lng];
-			}
-			switch (mapLinkProvider) {
-				case "google":
-					frontmatter.map_link = makeGoogleMapsLink(result);
-					break;
-				case "apple":
-					frontmatter.map_link = makeAppleMapsLink(result);
-					break;
+			for (const property of Object.keys(
+				enabledProperties
+			) as (keyof typeof enabledProperties)[]) {
+				const shouldInsert =
+					enabledProperties[property] &&
+					(overrideExistingProperties ||
+						frontmatter[property] === undefined);
+				if (!shouldInsert) {
+					continue;
+				}
+				switch (property) {
+					case "address":
+						frontmatter.address = result.address;
+						break;
+					case "location":
+						frontmatter.location = [result.lat, result.lng];
+						break;
+					case "map_link":
+						switch (mapLinkProvider) {
+							case "apple":
+								frontmatter.map_link =
+									makeAppleMapsLink(result);
+								break;
+							case "google":
+								frontmatter.map_link =
+									makeGoogleMapsLink(result);
+								break;
+						}
+						break;
+				}
 			}
 		});
 	}

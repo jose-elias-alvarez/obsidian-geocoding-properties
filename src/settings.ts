@@ -3,11 +3,15 @@ import GeocodingPlugin from "./main";
 import { GeocodingPluginSettings } from "./types";
 
 export const DEFAULT_SETTINGS: GeocodingPluginSettings = {
+	overrideExistingProperties: false,
+	mapLinkProvider: "apple",
 	apiProvider: "free-geocoding-api",
 	apiKey: "",
-	insertAddress: true,
-	insertLocation: false,
-	mapLinkProvider: "none",
+	enabledProperties: {
+		address: true,
+		location: false,
+		map_link: false,
+	},
 };
 
 export class GeocodingPluginSettingTab extends PluginSettingTab {
@@ -21,26 +25,62 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl("h2", { text: "API Settings" });
-		new Setting(containerEl).setName("Provider").addDropdown((dropdown) =>
-			dropdown
-				.addOptions({
-					["free-geocoding-api"]: "Free Geocoding API",
-					["google-geocoding"]: "Google Geocoding",
-				})
-				.setValue(this.plugin.settings.apiProvider)
-				.onChange(async (value) => {
-					switch (value) {
-						case "free-geocoding-api":
-						case "google-geocoding":
-							this.plugin.settings.apiProvider = value;
-							break;
-					}
-					await this.plugin.saveSettings();
-				})
-		);
+		containerEl.createEl("h1", { text: "Geocoding" });
 		new Setting(containerEl)
-			.setName("API Key")
+			.setName("Override existing properties")
+			.setDesc(
+				"Whether to override existing properties with the same name"
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.overrideExistingProperties)
+					.onChange(async (value) => {
+						this.plugin.settings.overrideExistingProperties = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
+			.setName("Map link provider")
+			.setDesc("Provider for the map_link property, if enabled")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOptions({
+						apple: "Apple Maps",
+						google: "Google Maps",
+					})
+					.setValue(this.plugin.settings.mapLinkProvider)
+					.onChange(async (value) => {
+						switch (value) {
+							case "google":
+							case "apple":
+								this.plugin.settings.mapLinkProvider = value;
+								break;
+						}
+						await this.plugin.saveSettings();
+					})
+			);
+		containerEl.createEl("h2", { text: "API" });
+		new Setting(containerEl)
+			.setName("API provider")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOptions({
+						["free-geocoding-api"]: "Free Geocoding API",
+						["google-geocoding"]: "Google Geocoding",
+					})
+					.setValue(this.plugin.settings.apiProvider)
+					.onChange(async (value) => {
+						switch (value) {
+							case "free-geocoding-api":
+							case "google-geocoding":
+								this.plugin.settings.apiProvider = value;
+								break;
+						}
+						await this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
+			.setName("API key")
 			.setDesc("Only required if using Google Geocoding")
 			.addText((text) =>
 				text
@@ -51,49 +91,22 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h2", { text: "Properties" });
-		new Setting(containerEl).setName("Address").addToggle((toggle) =>
-			toggle
-				.setValue(this.plugin.settings.insertAddress)
-				.onChange(async (value) => {
-					this.plugin.settings.insertAddress = value;
-					await this.plugin.saveSettings();
-				})
-		);
-		new Setting(containerEl)
-			.setName("Location")
-			.setDesc(
-				"Latitude and longitude in an obsidian-leaflet-compatible format"
-			)
-			.addToggle((toggle) =>
+		containerEl.createEl("h2", { text: "Enabled Properties" });
+		containerEl.createEl("p", {
+			text: "Properties to insert into the frontmatter of the active note.",
+		});
+		for (const property of Object.keys(
+			this.plugin.settings.enabledProperties
+		) as (keyof GeocodingPluginSettings["enabledProperties"])[]) {
+			new Setting(containerEl).setName(property).addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.insertLocation)
+					.setValue(this.plugin.settings.enabledProperties[property])
 					.onChange(async (value) => {
-						this.plugin.settings.insertLocation = value;
+						this.plugin.settings.enabledProperties[property] =
+							value;
 						await this.plugin.saveSettings();
 					})
 			);
-		new Setting(containerEl)
-			.setName("Map link")
-			.setDesc("A map link from the chosen provider")
-			.addDropdown((dropdown) =>
-				dropdown
-					.addOptions({
-						none: "None",
-						google: "Google Maps",
-						apple: "Apple Maps",
-					})
-					.setValue(this.plugin.settings.mapLinkProvider)
-					.onChange(async (value) => {
-						switch (value) {
-							case "none":
-							case "google":
-							case "apple":
-								this.plugin.settings.mapLinkProvider = value;
-								break;
-						}
-						await this.plugin.saveSettings();
-					})
-			);
+		}
 	}
 }

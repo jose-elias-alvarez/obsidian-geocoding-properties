@@ -1,12 +1,16 @@
 export type GeocodingProvider = "free-geocoding-api" | "google-geocoding";
-export type MapLinkProvider = "none" | "google" | "apple";
+export type MapLinkProvider = "google" | "apple";
 
 export interface GeocodingPluginSettings {
+	overrideExistingProperties: boolean;
+	mapLinkProvider: MapLinkProvider;
 	apiProvider: GeocodingProvider;
 	apiKey: string;
-	insertAddress: boolean;
-	insertLocation: boolean;
-	mapLinkProvider: MapLinkProvider;
+	enabledProperties: {
+		address: boolean;
+		location: boolean;
+		map_link: boolean;
+	};
 }
 
 export interface GeocodingResult {
