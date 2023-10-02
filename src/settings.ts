@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting, TextComponent } from "obsidian";
 import GeocodingPlugin from "./main";
 import { GeocodingPluginSettings } from "./types";
 
@@ -80,6 +80,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 			);
 
 		containerEl.createEl("h2", { text: "API settings" });
+		let apiKeyComponent: TextComponent;
 		new Setting(containerEl)
 			.setName("API provider")
 			.addDropdown((dropdown) =>
@@ -96,19 +97,29 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 								this.plugin.settings.apiProvider = value;
 								break;
 						}
+						if (value !== "google-geocoding") {
+							this.plugin.settings.apiKey = "";
+							apiKeyComponent.setDisabled(true);
+							apiKeyComponent.setValue("");
+						} else {
+							apiKeyComponent.setDisabled(false);
+						}
 						await this.plugin.saveSettings();
 					})
 			);
 		new Setting(containerEl)
 			.setName("API key")
-			.setDesc("Only required if using Google Geocoding")
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.apiKey)
-					.onChange(async (value) => {
+			.setDisabled(
+				this.plugin.settings.apiProvider !== "google-geocoding"
+			)
+			.addText((text) => {
+				apiKeyComponent = text;
+				text.setValue(this.plugin.settings.apiKey).onChange(
+					async (value) => {
 						this.plugin.settings.apiKey = value;
 						await this.plugin.saveSettings();
-					})
-			);
+					}
+				);
+			});
 	}
 }
