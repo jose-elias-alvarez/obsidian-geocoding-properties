@@ -6,7 +6,11 @@ export const fetchGoogleGeocodingResults = async (
 	searchTerm: string,
 	apiKey: string
 ): Promise<GeocodingResult[]> => {
-	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${apiKey}`;
+	const params = new URLSearchParams({
+		address: searchTerm,
+		key: apiKey,
+	});
+	const url = `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`;
 	const response = await requestUrl(url);
 	if (response.status !== 200) {
 		throw new Error(`Server responded with ${response.status}`);

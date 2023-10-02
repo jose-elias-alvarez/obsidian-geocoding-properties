@@ -5,7 +5,10 @@ import { FreeGeocodingAPIResult, GeocodingResult } from "../types";
 export const fetchFreeGeocodingAPIResults = async (
 	searchTerm: string
 ): Promise<GeocodingResult[]> => {
-	const url = `https://geocode.maps.co/search?q=${searchTerm}`;
+	const params = new URLSearchParams({
+		q: searchTerm,
+	});
+	const url = `https://geocode.maps.co/search?${params.toString()}`;
 	const response = await requestUrl(url);
 	const retryAfter = response.headers["Retry-After"];
 	switch (response.status) {
