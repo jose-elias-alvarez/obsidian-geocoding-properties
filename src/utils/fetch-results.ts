@@ -1,17 +1,5 @@
 import { requestUrl } from "obsidian";
-import { GeocodingResult } from "../results-modal";
-
-interface GeocodingAPIResponse {
-	status:
-		| "OK"
-		| "ZERO_RESULTS"
-		| "OVER_DAILY_LIMIT"
-		| "OVER_QUERY_LIMIT"
-		| "REQUEST_DENIED"
-		| "INVALID_REQUEST"
-		| "UNKNOWN_ERROR";
-	results: GeocodingResult[];
-}
+import { GeocodingAPIResponse } from "../types";
 
 export const fetchResults = async (searchTerm: string, apiKey: string) => {
 	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchTerm}&key=${apiKey}`;

@@ -1,18 +1,6 @@
 import { SuggestModal } from "obsidian";
 import GeocodingPlugin from "./main";
-
-// subset of Google Maps Geocoding API response
-export interface GeocodingResult {
-	formatted_address: string;
-	geometry: {
-		location: {
-			lat: number;
-			lng: number;
-		};
-	};
-	types: string[];
-	place_id: string;
-}
+import { GeocodingResult } from "./types";
 
 export class GeocodingResultsModal extends SuggestModal<GeocodingResult> {
 	plugin: GeocodingPlugin;

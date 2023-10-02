@@ -1,12 +1,15 @@
 import { Notice, Plugin } from "obsidian";
-import { GeocodingResult, GeocodingResultsModal } from "./results-modal";
+import { GeocodingResultsModal } from "./results-modal";
 import { GeocodingSearchModal } from "./search-modal";
 import {
 	DEFAULT_SETTINGS,
 	GeocodingPluginSettingTab,
 	GeocodingPluginSettings,
 } from "./settings";
+import { GeocodingResult } from "./types";
 import { fetchResults } from "./utils/fetch-results";
+import { makeAppleMapsLink } from "./utils/make-apple-maps-link";
+import { makeGoogleMapsLink } from "./utils/make-google-maps-link";
 
 export default class GeocodingPlugin extends Plugin {
 	settings: GeocodingPluginSettings;
@@ -16,8 +19,8 @@ export default class GeocodingPlugin extends Plugin {
 		this.addSettingTab(new GeocodingPluginSettingTab(this.app, this));
 
 		this.addCommand({
-			id: "geocoding-insert-location-properties",
-			name: "Insert location properties for current note",
+			id: "geocoding-insert-properties",
+			name: "Insert properties for current note",
 			callback: async () => {
 				const currentFile = this.app.workspace.getActiveFile();
 				if (!currentFile) {
@@ -46,7 +49,8 @@ export default class GeocodingPlugin extends Plugin {
 		if (!currentFile) {
 			return;
 		}
-		const { insertAddress, insertLocation } = this.settings;
+		const { insertAddress, insertLocation, mapLinkProvider } =
+			this.settings;
 		this.app.fileManager.processFrontMatter(currentFile, (frontmatter) => {
 			if (insertAddress) {
 				frontmatter.address = result.formatted_address;
@@ -56,6 +60,14 @@ export default class GeocodingPlugin extends Plugin {
 					result.geometry.location.lat,
 					result.geometry.location.lng,
 				];
+			}
+			switch (mapLinkProvider) {
+				case "google":
+					frontmatter.map_link = makeGoogleMapsLink(result);
+					break;
+				case "apple":
+					frontmatter.map_link = makeAppleMapsLink(result);
+					break;
 			}
 		});
 	}
