@@ -7,6 +7,7 @@ import { fetchFreeGeocodingAPIResults } from "./utils/fetch-free-geocoding-api-r
 import { fetchGoogleGeocodingResults } from "./utils/fetch-google-geocoding-results";
 import { makeAppleMapsLink } from "./utils/make-apple-maps-link";
 import { makeGoogleMapsLink } from "./utils/make-google-maps-link";
+import { makeOsmLink } from "./utils/make-osm-link";
 
 export default class GeocodingPlugin extends Plugin {
 	settings: GeocodingPluginSettings;
@@ -85,9 +86,6 @@ export default class GeocodingPlugin extends Plugin {
 					continue;
 				}
 				switch (property) {
-					case "address":
-						frontmatter.address = result.address;
-						break;
 					case "location":
 						frontmatter.location = [result.lat, result.lng];
 						break;
@@ -101,13 +99,13 @@ export default class GeocodingPlugin extends Plugin {
 								frontmatter.map_link =
 									makeAppleMapsLink(result);
 								break;
+							case "osm":
+								frontmatter.map_link = makeOsmLink(result);
+								break;
 						}
 						break;
-					case "lat":
-						frontmatter.lat = result.lat;
-						break;
-					case "lng":
-						frontmatter.lng = result.lng;
+					default:
+						frontmatter[property] = result[property];
 						break;
 				}
 			}

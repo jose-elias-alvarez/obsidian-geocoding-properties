@@ -1,5 +1,5 @@
 export type GeocodingProvider = "free-geocoding-api" | "google-geocoding";
-export type MapLinkProvider = "google" | "apple";
+export type MapLinkProvider = "google" | "apple" | "osm";
 
 export interface GeocodingPluginSettings {
 	enabledProperties: {

@@ -27,6 +27,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
+
 		containerEl.createEl("h2", { text: "Enabled properties" });
 		for (const property of Object.keys(
 			this.plugin.settings.enabledProperties
@@ -61,20 +62,23 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOptions({
-						apple: "Apple Maps",
 						google: "Google Maps",
+						apple: "Apple Maps",
+						osm: "OpenStreetMap",
 					})
 					.setValue(this.plugin.settings.mapLinkProvider)
 					.onChange(async (value) => {
 						switch (value) {
 							case "google":
 							case "apple":
+							case "osm":
 								this.plugin.settings.mapLinkProvider = value;
 								break;
 						}
 						await this.plugin.saveSettings();
 					})
 			);
+
 		containerEl.createEl("h2", { text: "API settings" });
 		new Setting(containerEl)
 			.setName("API provider")

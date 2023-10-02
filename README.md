@@ -38,6 +38,7 @@ Controls which map provider will be used when inserting the `map_link` property:
 
 -   [Google Maps](https://www.google.com/maps)
 -   [Apple Maps](https://maps.apple.com)
+-   [OpenStreetMap](https://www.openstreetmap.org)
 
 ### API settings
 
