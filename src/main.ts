@@ -1,8 +1,14 @@
 import { Notice, Plugin, TFile } from "obsidian";
 import { GeocodingResultsModal } from "./results-modal";
 import { GeocodingSearchModal } from "./search-modal";
-import { DEFAULT_SETTINGS, GeocodingPluginSettingTab } from "./settings";
-import { GeocodingPluginSettings, GeocodingResult } from "./types";
+import { defaultSettings } from "./settings";
+import { GeocodingPluginSettingTab } from "./settings-tab";
+import {
+	GeocodingPluginSettings,
+	GeocodingProperty,
+	GeocodingPropertyKey,
+	GeocodingResult,
+} from "./types";
 import { fetchFreeGeocodingAPIResults } from "./utils/fetch-free-geocoding-api-results";
 import { fetchGoogleGeocodingResults } from "./utils/fetch-google-geocoding-results";
 import { makeAppleMapsLink } from "./utils/make-apple-maps-link";
@@ -71,43 +77,45 @@ export default class GeocodingPlugin extends Plugin {
 		if (!currentFile) {
 			return;
 		}
-		const {
-			overrideExistingProperties,
-			mapLinkProvider,
-			enabledProperties,
-		} = this.settings;
+		const { overrideExistingProperties, mapLinkProvider, properties } =
+			this.settings;
 		this.app.fileManager.processFrontMatter(currentFile, (frontmatter) => {
-			for (const property of Object.keys(
-				enabledProperties
-			) as (keyof typeof enabledProperties)[]) {
+			for (const [key, property] of Object.entries(properties) as [
+				GeocodingPropertyKey,
+				GeocodingProperty
+			][]) {
 				const shouldInsert =
-					enabledProperties[property] &&
+					property.enabled &&
 					(overrideExistingProperties ||
-						frontmatter[property] === undefined);
+						frontmatter[property.frontmatterKey] === undefined);
 				if (!shouldInsert) {
 					continue;
 				}
-				switch (property) {
+				switch (key) {
 					case "location":
-						frontmatter.location = [result.lat, result.lng];
+						frontmatter[property.frontmatterKey] = [
+							result.lat.toString(),
+							result.lng.toString(),
+						];
 						break;
 					case "map_link":
 						switch (mapLinkProvider) {
 							case "google":
-								frontmatter.map_link =
+								frontmatter[property.frontmatterKey] =
 									makeGoogleMapsLink(result);
 								break;
 							case "apple":
-								frontmatter.map_link =
+								frontmatter[property.frontmatterKey] =
 									makeAppleMapsLink(result);
 								break;
 							case "osm":
-								frontmatter.map_link = makeOsmLink(result);
+								frontmatter[property.frontmatterKey] =
+									makeOsmLink(result);
 								break;
 						}
 						break;
 					default:
-						frontmatter[property] = result[property];
+						frontmatter[property.frontmatterKey] = result[key];
 						break;
 				}
 			}
@@ -117,7 +125,7 @@ export default class GeocodingPlugin extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
-			DEFAULT_SETTINGS,
+			defaultSettings,
 			await this.loadData()
 		);
 	}

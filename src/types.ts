@@ -1,14 +1,24 @@
+export type GeocodingPropertyKey =
+	| "address"
+	| "lat"
+	| "lng"
+	| "location"
+	| "map_link";
 export type GeocodingProvider = "free-geocoding-api" | "google-geocoding";
 export type MapLinkProvider = "google" | "apple" | "osm";
 
+export interface GeocodingPropertyDescription {
+	name: string;
+	detail?: string;
+}
+
+export interface GeocodingProperty {
+	frontmatterKey: string;
+	enabled: boolean;
+}
+
 export interface GeocodingPluginSettings {
-	enabledProperties: {
-		address: boolean;
-		lat: boolean;
-		lng: boolean;
-		location: boolean;
-		map_link: boolean;
-	};
+	properties: Record<GeocodingPropertyKey, GeocodingProperty>;
 	overrideExistingProperties: boolean;
 	mapLinkProvider: MapLinkProvider;
 	apiProvider: GeocodingProvider;

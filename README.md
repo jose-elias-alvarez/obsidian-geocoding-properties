@@ -4,7 +4,7 @@ Insert address / location data from geocoding APIs as Obsidian properties.
 
 ## Usage
 
-The plugin operates on the active note. It queries the selected geocoding API using one of the following search terms, in order of priority:
+The plugin operates on the active note. It queries the configured geocoding API using one of the following search terms, in order of priority:
 
 -   The current note's `address` property, if set
 -   The current note's `title` property, if set
@@ -12,29 +12,29 @@ The plugin operates on the active note. It queries the selected geocoding API us
 
 You'll be prompted to edit the search term before submitting it. If a search term is too broad, the API may return too many results or zero results, so it often helps to add additional information (city, state, country) to the term before submitting it.
 
-After selecting a result, the active note's frontmatter will be updated with the properties specified in [Enabled properties](#enabled-properties).
+After selecting a result, the active note's frontmatter will be updated with the properties specified in [the plugin's settings](#properties).
 
 ## Settings
 
-### Enabled properties
+### Properties
 
-Controls which properties will be inserted into the active note's frontmatter:
+Each property can be enabled or disabled, and you can also specify a custom key for each property:
 
 -   `address`: The formatted address returned by the API (format is not guaranteed and varies by API)
 -   `lat`: The latitude of the location
 -   `lng`: The longitude of the location
--   `location`: The coordinates of the location in an [obsidian-leaflet](https://github.com/javalent/obsidian-leaflet)-compatible format
+-   `location`: The coordinates of the location in an [obsidian-leaflet](https://github.com/javalent/obsidian-leaflet)-compatible `[lat, lng]` format
 -   `map_link`: A link to an online map to the location using the configured [map provider](#map-provider)
 
 ### Property settings
 
 #### Override existing properties
 
-Controls whether existing properties will be overwritten when inserting.
+Controls whether existing properties should be overwritten when inserting (defaults to false).
 
 #### Map provider
 
-Controls which map provider will be used when inserting the `map_link` property:
+Controls which map provider should be used when inserting the `map_link` property (defaults to Google Maps):
 
 -   [Google Maps](https://www.google.com/maps)
 -   [Apple Maps](https://maps.apple.com)
@@ -48,7 +48,7 @@ The plugin currently supports two geocoding APIs:
 
 ##### [Free Geocoding API](https://geocode.maps.co)
 
-This is the plugin's default API. It's free, but accuracy is not guaranteed, and you may be subjected to rate limiting. (It also tends to show duplicates.)
+This is the default API. It's free, but accuracy is not guaranteed, and you may be subjected to rate limiting. (It also tends to show multiple entries for the same location.)
 
 ##### [Google Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview)
 
