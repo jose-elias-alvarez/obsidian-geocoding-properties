@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, TextComponent } from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 import GeocodingPlugin from "./main";
 import { GeocodingPluginSettings } from "./types";
 
@@ -80,7 +80,6 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 			);
 
 		containerEl.createEl("h2", { text: "API" });
-		let apiKeyComponent: TextComponent;
 		new Setting(containerEl)
 			.setName("API provider")
 			.addDropdown((dropdown) =>
@@ -97,13 +96,6 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 								this.plugin.settings.apiProvider = value;
 								break;
 						}
-						if (value !== "google-geocoding") {
-							this.plugin.settings.apiKey = "";
-							apiKeyComponent.setDisabled(true);
-							apiKeyComponent.setValue("");
-						} else {
-							apiKeyComponent.setDisabled(false);
-						}
 						await this.plugin.saveSettings();
 					})
 			);
@@ -112,14 +104,13 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 			.setDisabled(
 				this.plugin.settings.apiProvider !== "google-geocoding"
 			)
-			.addText((text) => {
-				apiKeyComponent = text;
-				text.setValue(this.plugin.settings.apiKey).onChange(
-					async (value) => {
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.apiKey)
+					.onChange(async (value) => {
 						this.plugin.settings.apiKey = value;
 						await this.plugin.saveSettings();
-					}
-				);
-			});
+					})
+			);
 	}
 }
