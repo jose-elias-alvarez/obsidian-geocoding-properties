@@ -26,6 +26,10 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 					text
 						.setValue(property.frontmatterKey)
 						.onChange(async (value) => {
+							if (!value) {
+								// disallow setting empty string
+								return;
+							}
 							property.frontmatterKey = value;
 							await this.plugin.saveSettings();
 						})
