@@ -23,7 +23,7 @@ export default class GeocodingPlugin extends Plugin {
 		this.addSettingTab(new GeocodingPluginSettingTab(this.app, this));
 
 		this.addCommand({
-			id: "geocoding-properties-insert",
+			id: "insert-into-current-note",
 			name: "Insert properties into current note",
 			editorCallback: async (_, ctx) => {
 				const currentFile = ctx.file;
