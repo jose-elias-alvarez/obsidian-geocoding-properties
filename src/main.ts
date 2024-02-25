@@ -114,6 +114,12 @@ export default class GeocodingPlugin extends Plugin {
 								break;
 						}
 						break;
+					case "map_view_link": {
+						frontmatter[
+							property.frontmatterKey
+						] = `[](geo:${result.lat},${result.lng})`;
+						break;
+					}
 					default:
 						frontmatter[property.frontmatterKey] = result[key];
 						break;

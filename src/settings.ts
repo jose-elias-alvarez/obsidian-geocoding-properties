@@ -25,6 +25,10 @@ export const propertyDescriptions: Record<
 	map_link: {
 		name: "Map link",
 	},
+	map_view_link: {
+		name: "Map view link",
+		detail: "A link in [](geo:lat,lng) format",
+	},
 };
 
 export const defaultSettings: GeocodingPluginSettings = {
@@ -47,6 +51,10 @@ export const defaultSettings: GeocodingPluginSettings = {
 		},
 		map_link: {
 			frontmatterKey: "map_link",
+			enabled: false,
+		},
+		map_view_link: {
+			frontmatterKey: "map_view_link",
 			enabled: false,
 		},
 	},

@@ -25,6 +25,7 @@ Each property can be enabled or disabled, and you can also specify a custom key 
 -   `lng`: The longitude of the location
 -   `location`: The coordinates of the location in an [obsidian-leaflet](https://github.com/javalent/obsidian-leaflet)-compatible `[lat, lng]` format
 -   `map_link`: A link to an online map to the location using the configured [map provider](#map-provider)
+-   `map_view_link`: A link in in an [obsidian-map-view](https://github.com/esm7/obsidian-map-view)-compatible `[](geo:lat,lng)` format
 
 ### Property settings
 

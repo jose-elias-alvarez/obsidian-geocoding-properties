@@ -3,7 +3,8 @@ export type GeocodingPropertyKey =
 	| "lat"
 	| "lng"
 	| "location"
-	| "map_link";
+	| "map_link"
+	| "map_view_link";
 export type GeocodingProvider = "free-geocoding-api" | "google-geocoding";
 export type MapLinkProvider = "google" | "apple" | "osm";
 
