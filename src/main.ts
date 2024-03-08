@@ -1,5 +1,4 @@
 import { Notice, Plugin, TFile } from "obsidian";
-import { GeocodingResultsModal } from "./results-modal";
 import { GeocodingSearchModal } from "./search-modal";
 import { defaultSettings } from "./settings";
 import { GeocodingPluginSettingTab } from "./settings-tab";
@@ -34,6 +33,19 @@ export default class GeocodingPlugin extends Plugin {
 				new GeocodingSearchModal(this, searchTerm).open();
 			},
 		});
+		this.addCommand({
+			id: "insert-into-current-note-no-confirmation",
+			name: "Insert properties into current note (no confirmation)",
+			editorCallback: async (_, ctx) => {
+				const currentFile = ctx.file;
+				if (!currentFile) {
+					return;
+				}
+				const searchTerm = this.getSearchTerm(currentFile);
+				const results = await this.getResults(searchTerm);
+				await this.insertProperties(results[0]);
+			},
+		});
 	}
 
 	getSearchTerm(file: TFile) {
@@ -48,28 +60,36 @@ export default class GeocodingPlugin extends Plugin {
 		return searchTerm;
 	}
 
-	async getAndDisplayResults(searchTerm: string) {
+	async getResults(searchTerm: string) {
+		const results: GeocodingResult[] = [];
 		try {
 			const { apiProvider, apiKey } = this.settings;
-			let results: GeocodingResult[] | undefined;
 			switch (apiProvider) {
 				case "free-geocoding-api":
-					results = await fetchFreeGeocodingAPIResults(searchTerm);
-					break;
-				case "google-geocoding":
-					results = await fetchGoogleGeocodingResults(
-						searchTerm,
-						apiKey
+					results.push(
+						...(await fetchFreeGeocodingAPIResults(searchTerm))
 					);
 					break;
+				case "google-geocoding":
+					results.push(
+						...(await fetchGoogleGeocodingResults(
+							searchTerm,
+							apiKey
+						))
+					);
+					break;
+				default:
+					throw new Error(`Invalid API provider: ${apiProvider}`);
 			}
-			if (!results) {
-				return;
-			}
-			new GeocodingResultsModal(this, results).open();
 		} catch (error) {
 			new Notice(String(error));
+			// log to console
+			throw error;
 		}
+		if (!results?.length) {
+			new Notice(`No results found for "${searchTerm}"`);
+		}
+		return results;
 	}
 
 	async insertProperties(result: GeocodingResult) {

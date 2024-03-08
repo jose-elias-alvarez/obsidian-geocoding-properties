@@ -10,7 +10,10 @@ The plugin operates on the active note. It queries the configured geocoding API 
 -   The current note's `title` property, if set
 -   The current note's name
 
-You'll be prompted to edit the search term before submitting it. If a search term is too broad, the API may return too many results or zero results, so it often helps to add additional information (city, state, country) to the term before submitting it.
+The plugin provides two commands:
+
+-   `Insert properties into current note`: prompts you to edit the search term and confirm before querying the API. If a term is too broad, the API may return too many results or zero results, so it often helps to add additional information (city, state, country) to the term.
+-   `Insert properties into current note (no confirmation)`: skips confirmation and queries the API directly using the search term.
 
 After selecting a result, the active note's frontmatter will be updated with the properties specified in [the plugin's settings](#properties).
 

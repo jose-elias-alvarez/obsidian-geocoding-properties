@@ -1,5 +1,6 @@
 import { Modal, Setting } from "obsidian";
 import GeocodingPlugin from "./main";
+import { GeocodingResultsModal } from "./results-modal";
 
 export class GeocodingSearchModal extends Modal {
 	searchTerm: string;
@@ -9,6 +10,12 @@ export class GeocodingSearchModal extends Modal {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.searchTerm = searchTerm;
+	}
+
+	async onSubmit() {
+		this.close();
+		const results = await this.plugin.getResults(this.searchTerm);
+		new GeocodingResultsModal(this.plugin, results).open();
 	}
 
 	onOpen() {
@@ -29,17 +36,15 @@ export class GeocodingSearchModal extends Modal {
 			btn
 				.setButtonText("Submit")
 				.setCta()
-				.onClick(() => {
-					this.close();
-					this.plugin.getAndDisplayResults(this.searchTerm);
+				.onClick(async () => {
+					await this.onSubmit();
 				})
 		);
 		// submit on enter (not sure why this doesn't work by default?)
-		contentEl.addEventListener("keypress", (e) => {
+		contentEl.addEventListener("keypress", async (e) => {
 			if (e.key === "Enter") {
 				e.preventDefault();
-				this.close();
-				this.plugin.getAndDisplayResults(this.searchTerm);
+				await this.onSubmit();
 			}
 		});
 	}
