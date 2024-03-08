@@ -67,7 +67,10 @@ export default class GeocodingPlugin extends Plugin {
 			switch (apiProvider) {
 				case "free-geocoding-api":
 					results.push(
-						...(await fetchFreeGeocodingAPIResults(searchTerm))
+						...(await fetchFreeGeocodingAPIResults(
+							searchTerm,
+							apiKey
+						))
 					);
 					break;
 				case "google-geocoding":

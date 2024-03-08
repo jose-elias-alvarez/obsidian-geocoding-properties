@@ -3,10 +3,12 @@ import { FreeGeocodingAPIResult, GeocodingResult } from "../types";
 
 // https://geocode.maps.co
 export const fetchFreeGeocodingAPIResults = async (
-	searchTerm: string
+	searchTerm: string,
+	apiKey: string
 ): Promise<GeocodingResult[]> => {
 	const params = new URLSearchParams({
 		q: searchTerm,
+		api_key: apiKey,
 	});
 	const url = `https://geocode.maps.co/search?${params.toString()}`;
 	const response = await requestUrl({
@@ -17,6 +19,8 @@ export const fetchFreeGeocodingAPIResults = async (
 	switch (response.status) {
 		case 200:
 			break;
+		case 401:
+			throw new Error("Unauthorized. Please check your API key.");
 		case 409:
 		case 503:
 			if (retryAfter) {

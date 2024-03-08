@@ -52,16 +52,18 @@ The plugin currently supports two geocoding APIs:
 
 ##### [Free Geocoding API](https://geocode.maps.co)
 
-This is the default API. It's free, but accuracy is not guaranteed, and you may be subjected to rate limiting. (It also tends to show multiple entries for the same location.)
+This is the default API. It's free, but accuracy is not guaranteed, and you may be subjected to rate limiting as a free user. (It also tends to show multiple entries for the same location.)
+
+You'll need to [register an account](https://geocode.maps.co/join/) and get a free API key to use this service.
 
 ##### [Google Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview)
 
 **This is a paid API** (the cost per request is low, but it's not free). Setup is non-trivial, but accuracy is higher and rate limits are more generous.
 
-You'll need to set up a Google Cloud project and enable the Geocoding API. You'll also need to [create an API key](https://developers.google.com/maps/documentation/geocoding/get-api-key). You'll also need to set up a billing account and [enable billing](https://developers.google.com/maps/documentation/geocoding/get-api-key#premium-auth) for your project.
-
-**Please be careful with your API key!** I do not have access to the key, but it's stored as plaintext in your Obsidian vault, and anyone with access to the key can make requests on your behalf, which will be charged to your billing account. If you're in doubt, please stick with the free API.
+You'll need to set up a Google Cloud project and enable the Geocoding API. You'll also need to [create an API key](https://developers.google.com/maps/documentation/geocoding/get-api-key) and set up a billing account and [enable billing](https://developers.google.com/maps/documentation/geocoding/get-api-key#premium-auth) for your project.
 
 #### API key
 
-If using the [Google Geocoding API](#google-geocoding-api), you'll need to set your API key here.
+You'll need to set your API key here.
+
+**Please be careful with your API key!** I do not have access to the key, but it's stored as plaintext in your Obsidian vault, and anyone with access to the key can make requests on your behalf (which will be charged to your account if you've set up billing for the configured API).
