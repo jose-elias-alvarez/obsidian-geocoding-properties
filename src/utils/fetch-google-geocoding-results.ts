@@ -11,7 +11,10 @@ export const fetchGoogleGeocodingResults = async (
 		key: apiKey,
 	});
 	const url = `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`;
-	const response = await requestUrl(url);
+	const response = await requestUrl({
+		url,
+		throw: false,
+	});
 	if (response.status !== 200) {
 		throw new Error(`Server responded with ${response.status}`);
 	}

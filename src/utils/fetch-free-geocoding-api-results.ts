@@ -9,7 +9,10 @@ export const fetchFreeGeocodingAPIResults = async (
 		q: searchTerm,
 	});
 	const url = `https://geocode.maps.co/search?${params.toString()}`;
-	const response = await requestUrl(url);
+	const response = await requestUrl({
+		url,
+		throw: false,
+	});
 	const retryAfter = response.headers["Retry-After"];
 	switch (response.status) {
 		case 200:
