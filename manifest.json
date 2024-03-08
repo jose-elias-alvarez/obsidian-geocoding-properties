@@ -1,7 +1,7 @@
 {
 	"id": "geocoding-properties",
 	"name": "Geocoding Properties",
-	"version": "1.2.1",
+	"version": "2.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Insert address / location data from geocoding APIs as Obsidian properties.",
 	"author": "Jose Elias Alvarez",
