@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import GeocodingPlugin from "./main";
 import { propertyDescriptions } from "./settings";
-import { GeocodingProperty, GeocodingPropertyKey } from "./types";
+import { GeocodingPropertyDescription, GeocodingPropertyKey } from "./types";
 
 export class GeocodingPluginSettingTab extends PluginSettingTab {
 	plugin: GeocodingPlugin;
@@ -16,12 +16,13 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl("h2", { text: "Properties" });
-		for (const [key, property] of Object.entries(
-			this.plugin.settings.properties
-		) as [GeocodingPropertyKey, GeocodingProperty][]) {
+		for (const [key, description] of Object.entries(
+			propertyDescriptions
+		) as [GeocodingPropertyKey, GeocodingPropertyDescription][]) {
+			const property = this.plugin.settings.properties[key];
 			new Setting(containerEl)
-				.setName(propertyDescriptions[key].name || key)
-				.setDesc(propertyDescriptions[key].detail || "")
+				.setName(description.name || key)
+				.setDesc(description.detail || "")
 				.addText((text) =>
 					text
 						.setValue(property.frontmatterKey)

@@ -1,3 +1,4 @@
+import merge from "deepmerge";
 import { Notice, Plugin, TFile } from "obsidian";
 import { GeocodingSearchModal } from "./search-modal";
 import { defaultSettings } from "./settings";
@@ -152,11 +153,7 @@ export default class GeocodingPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			defaultSettings,
-			await this.loadData()
-		);
+		this.settings = merge(defaultSettings, await this.loadData());
 	}
 
 	async saveSettings() {
