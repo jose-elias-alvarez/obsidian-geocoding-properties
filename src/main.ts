@@ -153,7 +153,7 @@ export default class GeocodingPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = merge(defaultSettings, await this.loadData());
+		this.settings = merge(defaultSettings, (await this.loadData()) || {});
 	}
 
 	async saveSettings() {
