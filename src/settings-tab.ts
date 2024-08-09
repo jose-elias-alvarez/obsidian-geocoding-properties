@@ -15,7 +15,6 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Properties" });
 		for (const [key, description] of Object.entries(
 			propertyDescriptions
 		) as [GeocodingPropertyKey, GeocodingPropertyDescription][]) {
@@ -44,7 +43,8 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 						})
 				);
 		}
-		containerEl.createEl("h2", { text: "Behavior" });
+
+		new Setting(containerEl).setName('Behavior').setHeading();
 		new Setting(containerEl)
 			.setName("Override existing properties")
 			.setDesc(
@@ -81,7 +81,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h2", { text: "API" });
+		new Setting(containerEl).setName('API').setHeading();
 		new Setting(containerEl)
 			.setName("API provider")
 			.addDropdown((dropdown) =>
