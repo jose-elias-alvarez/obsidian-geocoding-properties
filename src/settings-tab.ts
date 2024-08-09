@@ -15,6 +15,7 @@ export class GeocodingPluginSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
+		new Setting(containerEl).setName('Properties').setHeading();
 		for (const [key, description] of Object.entries(
 			propertyDescriptions
 		) as [GeocodingPropertyKey, GeocodingPropertyDescription][]) {
