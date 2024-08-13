@@ -20,10 +20,11 @@ export class GeocodingSearchModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
-		contentEl.createEl("h1", {
-			text: "Confirm search term",
-		});
-		new Setting(contentEl).setName("Name").addText((text) => {
+		this.setTitle("Confirm search term");
+
+		const inputContainer = contentEl.createEl("div", { cls: "geocoding-search-container" });
+
+		new Setting(inputContainer).setName("Name").addText((text) => {
 			const component = text
 				.setValue(this.searchTerm)
 				.onChange((value) => {
@@ -32,14 +33,14 @@ export class GeocodingSearchModal extends Modal {
 			// increase width for easier editing
 			component.inputEl.style.width = "100%";
 		});
-		new Setting(contentEl).addButton((btn) =>
-			btn
-				.setButtonText("Submit")
-				.setCta()
-				.onClick(async () => {
-					await this.onSubmit();
-				})
-		);
+
+		const buttonContainer = contentEl.createEl("div", { cls: "modal-button-container" });
+
+		const submitButton = buttonContainer.createEl("button", { text: "Submit", cls: "mod-cta" });
+		submitButton.addEventListener("click", async () => {
+			await this.onSubmit();
+		});
+
 		// submit on enter (not sure why this doesn't work by default?)
 		contentEl.addEventListener("keypress", async (e) => {
 			if (e.key === "Enter") {
